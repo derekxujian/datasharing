@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>社牛抽卡迎挑战</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 20px; 
+            margin: 0;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .card { 
+            background: rgba(255,255,255,0.2); 
+            padding: 20px; 
+            margin: 10px; 
+            display: inline-block; 
+            cursor: pointer; 
+            border-radius: 15px; 
+            text-align: center;
+            min-width: 100px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+        }
+        .card h2 {
+            font-size: 2rem;
+            margin: 0 0 5px 0;
+        }
+        .card p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.8); 
+            z-index: 1000;
+        }
+        .modal-content { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%,-50%); 
+            background: white; 
+            color: black; 
+            padding: 30px; 
+            border-radius: 15px; 
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-content h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .modal-content p {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        #timer {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        @media (max-width: 768px) {
+            .title { font-size: 2rem; }
+            .card { margin: 5px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">社牛抽卡迎挑战</h1>
+        <p class="subtitle">点击卡片，开启你的挑战之旅</p>
+    </div>
+    
+    <div id="cards"></div>
+    
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3 id="questionTitle"></h3>
+            <p id="questionText"></p>
+            <p id="timer">准备时间：30秒</p>
+            <button onclick="startTimer()">开始计时</button>
+            <button onclick="closeModal()">重新选择</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            "你今天来之前的心情如何？为什么？",
+            "你进会议室最先注意到什么？",
+            "你上一次大笑是什么事情？",
+            "说一个你喜欢的同事特点。",
+            "你认为自己在团队中的角色是什么？",
+            "你最喜欢的午餐类型是什么？",
+            "你在陌生环境中的第一反应是什么？",
+            "你的一项小兴趣是什么？",
+            "你和陌生人第一次聊天会聊什么？",
+            "描述一个让你觉得舒服的工作环境。",
+            "你最喜欢的周末活动是什么？",
+            "你通常如何进入工作状态？",
+            "上一次你被赞美是什么时候？",
+            "你在团队会议中最常做的行为是什么？",
+            "你下班后的习惯是什么？",
+            "如果今天有一个人你想感谢，会是谁？",
+            "当你走进新团队，你通常怎么做？",
+            "你最喜欢的音乐是什么类型？",
+            "你会不会主动和别人聊天气？",
+            "描述一个让你非常放松的场景。"
+        ];
+
+        let timer;
+        let timeLeft = 30;
+
+        // 生成卡片
+        function createCards() {
+            const container = document.getElementById('cards');
+            for (let i = 0; i < questions.length; i++) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = '<h2>' + (i + 1) + '</h2><p>挑战卡</p>';
+                card.onclick = function() { showQuestion(i); };
+                container.appendChild(card);
+            }
+        }
+
+        function showQuestion(index) {
+            document.getElementById('questionTitle').textContent = '第 ' + (index + 1) + ' 题';
+            document.getElementById('questionText').textContent = questions[index];
+            document.getElementById('modal').style.display = 'block';
+            timeLeft = 30;
+            document.getElementById('timer').textContent = '准备时间：30秒';
+        }
+
+        function startTimer() {
+            if (timer) clearInterval(timer);
+            timeLeft = 30;
+            timer = setInterval(function() {
+                timeLeft--;
+                document.getElementById('timer').textContent = '剩余时间：' + timeLeft + '秒';
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('timer').textContent = '时间到！开始回答吧！';
+                }
+            }, 1000);
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            if (timer) clearInterval(timer);
+        }
+
+        // 页面加载时创建卡片
+        window.onload = function() {
+            createCards();
+        };
+    </script>
+</body>
+</html>
+
